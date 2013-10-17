@@ -4,9 +4,9 @@ bashfuns
 Set up:
 
 ```
-$ cd $HOME
 $ git clone https://github.com/mewlips/bashfuns.git
-$ echo "source $HOME/bashfuns/bashfuns.bash" >> $HOME/.bashrc
+$ ln -sf $PWD/bashfuns/bashfuns.bash $HOME/.bashfuns
+$ echo "source $HOME/.bashfuns" >> $HOME/.bashrc
 $ source $HOME/.bashrc # or exit then re-login
 ```
 
