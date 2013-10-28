@@ -54,4 +54,4 @@ listfuns() {
 }
 
 loadfuns
-setprivate
+setglobal
