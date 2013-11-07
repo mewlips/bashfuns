@@ -26,5 +26,5 @@ $ left somefile
 $ right somefile2
 $ mydiff
 ...
-$ savefuns left right mydiff
+$ bf save -g left right mydiff
 ```
