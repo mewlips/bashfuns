@@ -110,7 +110,7 @@ alias bf=bashfuns
 
 # key bindings
 # F2:list F3:load F4:save F5:edit F6:load-script F7:edit-script
-if ps -ax | grep $PPID | grep terminator > /dev/null; then
+if ps ax | grep $PPID | grep terminator > /dev/null; then
     # work around terminator bug
     bind '"OQ":"bf list"'
     bind '"OR":"bf load"'
