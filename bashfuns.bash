@@ -1,17 +1,19 @@
 #!/bin/bash
 
-################
-# bashfuns 2.0 #
-################
+############
+# bashfuns #
+############
 
 BASHFUNS_SCRIPT=~/.bashfuns
+BASHFUNS_VERSION=2.1
+
 BASHFUNS_SAVES_GLOBAL=~/.bashfuns-saves
 BASHFUNS_SAVES_PRIVATE=~/.bashfuns-saves_${USER}_at_${HOSTNAME}
 
 bashfuns-edit-script() {
     $EDITOR "$BASHFUNS_SCRIPT"
 }
-bashfuns-reload-script() {
+bashfuns-load-script() {
     . "$BASHFUNS_SCRIPT"
 }
 bashfuns-save() {
@@ -31,7 +33,7 @@ bashfuns-save() {
         fi
     done
 }
-bashfuns-reload() {
+bashfuns-load() {
     for saves in "$BASHFUNS_SAVES_GLOBAL" "$BASHFUNS_SAVES_PRIVATE"; do
         if [ -f "$saves" ]; then
             . "$saves"
@@ -79,7 +81,18 @@ bashfuns-save-alias() {
 }
 
 bashfuns-help() {
-    echo bashfuns
+    echo "Bashfuns v$BASHFUNS_VERSION"
+    echo
+    echo "bf help            :     "
+    echo "bf list            : <F2>"
+    echo "bf load            : <F3>"
+    echo "bf save <fun>..    : <F4>"
+    echo "bf save -g <fun>.. :     "
+    echo "bf edit            : <F5>"
+    echo "bf edit -g         :     "
+    echo "bf load-script     : <F6>"
+    echo "bf save-script     : <F7>"
+    echo
 }
 bashfuns() {
     local cmd="$1"
@@ -91,6 +104,25 @@ bashfuns() {
     bashfuns-"$cmd" $*
 }
 
-bashfuns-reload
+bashfuns-load
 
 alias bf=bashfuns
+
+# key bindings
+# F2:list F3:load F4:save F5:edit F6:load-script F7:edit-script
+if ps -ax | grep $PPID | grep terminator > /dev/null; then
+    # work around terminator bug
+    bind '"OQ":"bf list"'
+    bind '"OR":"bf load"'
+    bind '"OS":" bf save"'
+    bind '"[15~":" bf edit"'
+    bind '"[17~":"bf load-script"'
+    bind '"[18~":"bf edit-script"'
+else
+    bind '"OQ":"bf list"'
+    bind '"OR":"bf load"'
+    bind '"OS":"bf save "'
+    bind '"[15~":"bf edit "'
+    bind '"[17~":"bf load-script"'
+    bind '"[18~":"bf edit-script"'
+fi
