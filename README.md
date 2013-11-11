@@ -5,8 +5,8 @@ Set up:
 
 ```
 $ git clone https://github.com/mewlips/bashfuns.git
-$ ln -sf $PWD/bashfuns/bashfuns.bash $HOME/.bashfuns
-$ echo "source $HOME/.bashfuns" >> $HOME/.bashrc
+$ cd bashfuns
+$ ./install.sh
 $ source $HOME/.bashrc # or exit then re-login
 ```
 
@@ -26,5 +26,5 @@ $ left somefile
 $ right somefile2
 $ mydiff
 ...
-$ savefuns left right mydiff
+$ bf save -g left right mydiff
 ```

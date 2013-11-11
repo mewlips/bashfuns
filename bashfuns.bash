@@ -1,50 +1,59 @@
 #!/bin/bash
 
 ################
-# bashfuns 1.0 #
+# bashfuns 2.0 #
 ################
 
 BASHFUNS_SCRIPT=~/.bashfuns
 BASHFUNS_SAVES_GLOBAL=~/.bashfuns-saves
 BASHFUNS_SAVES_PRIVATE=~/.bashfuns-saves_${USER}_at_${HOSTNAME}
 
-editbashfuns() {
+bashfuns-edit-script() {
     $EDITOR "$BASHFUNS_SCRIPT"
 }
-loadbashfuns() {
+bashfuns-reload-script() {
     . "$BASHFUNS_SCRIPT"
 }
-setglobal() {
-    BASHFUNS_SAVES="$BASHFUNS_SAVES_GLOBAL"
-}
-setprivate() {
-    BASHFUNS_SAVES="$BASHFUNS_SAVES_PRIVATE"
-}
-savefuns() {
+bashfuns-save() {
+    local saves
+    if [ "$1" == "-g" ]; then
+        saves="$BASHFUNS_SAVES_GLOBAL"
+        shift
+    else
+        saves="$BASHFUNS_SAVES_PRIVATE"
+    fi
     for fun in $*; do
-        if [ ! -z "$fun" ]; then
-            declare -f "$fun" >> "$BASHFUNS_SAVES"
-            if [ $? = 0 ]; then
-                echo \"$fun\" saved.
-            else
-                echo \"$fun\" is not defined.
-            fi
+        declare -f "$fun" >> "$saves"
+        if [ $? = 0 ]; then
+            echo \"$fun\" saved.
         else
-            echo usage: savefun \<fun\>..
+            echo "undefined function: $fun [skipped]"
         fi
     done
 }
-loadfuns() {
+bashfuns-reload() {
     for saves in "$BASHFUNS_SAVES_GLOBAL" "$BASHFUNS_SAVES_PRIVATE"; do
         if [ -f "$saves" ]; then
             . "$saves"
         fi
     done
 }
-editfuns() {
-    $EDITOR "$BASHFUNS_SAVES"
+bashfuns-edit() {
+    local saves
+    if [ "$1" == "-g" ]; then
+        saves="$BASHFUNS_SAVES_GLOBAL"
+        shift
+    else
+        saves="$BASHFUNS_SAVES_PRIVATE"
+    fi
+
+    if [ "$EDITOR" == "vim" ]; then
+        vim -c ":set syntax=sh" "$saves"
+    else
+        $EDITOR "$saves"
+    fi
 }
-listfuns() {
+bashfuns-list() {
     for saves in "$BASHFUNS_SAVES_GLOBAL" "$BASHFUNS_SAVES_PRIVATE"; do
         if [ -f "$saves" ]; then
             echo $saves
@@ -52,6 +61,36 @@ listfuns() {
         fi
     done
 }
+bashfuns-save-alias() {
+    local saves
+    if [ "$1" == "-g" ]; then
+        saves="$BASHFUNS_SAVES_GLOBAL"
+        shift
+    else
+        saves="$BASHFUNS_SAVES_PRIVATE"
+    fi
 
-loadfuns
-setglobal
+    for a in $*; do
+        if alias "$a" > /dev/null; then
+            alias "$a" >> "$saves"
+            echo "$a" saved.
+        fi
+    done
+}
+
+bashfuns-help() {
+    echo bashfuns
+}
+bashfuns() {
+    local cmd="$1"
+    if [ -z "$cmd" ]; then
+        bashfuns-help
+        return
+    fi
+    shift
+    bashfuns-"$cmd" $*
+}
+
+bashfuns-reload
+
+alias bf=bashfuns
