@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ############
 # bashfuns #
@@ -110,19 +110,11 @@ alias bf=bashfuns
 
 # key bindings
 # F2:list F3:load F4:save F5:edit F6:load-script F7:edit-script
-if ps -ax | grep $PPID | grep terminator > /dev/null; then
-    # work around terminator bug
-    bind '"OQ":"bf list"'
-    bind '"OR":"bf load"'
-    bind '"OS":" bf save"'
-    bind '"[15~":" bf edit"'
-    bind '"[17~":"bf load-script"'
-    bind '"[18~":"bf edit-script"'
-else
-    bind '"OQ":"bf list"'
-    bind '"OR":"bf load"'
-    bind '"OS":"bf save "'
-    bind '"[15~":"bf edit "'
-    bind '"[17~":"bf load-script"'
-    bind '"[18~":"bf edit-script"'
-fi
+bind '"OQ":"bf list"'
+bind '"OR":"bf load"'
+bind '"OS":"bf save "'
+bind '"[15~":"bf edit "'
+bind '"[17~":"bf load-script"'
+bind '"[18~":"bf edit-script"'
+
+PS1_LINE_ADDON="[bashfuns] F2:LIST F3:LOAD F4:SAVE F5:EDIT F6:LOAD-SCR F7:EDIT-SCR\n"

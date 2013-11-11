@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-ln -sf "$PWD"/bashfuns.bash $HOME/.bashfuns
+ln -sf "$PWD"/bashfuns.sh $HOME/.bashfuns
 echo "source $HOME/.bashfuns" >> $HOME/.bashrc
