@@ -117,4 +117,4 @@ bind '"[15~":"bf edit "'
 bind '"[17~":"bf load-script"'
 bind '"[18~":"bf edit-script"'
 
-PS1_LINE_ADDON="[bashfuns] F2:LIST F3:LOAD F4:SAVE F5:EDIT F6:LOAD-SCR F7:EDIT-SCR\n"
+#BPL_PS1_LINE_ADDON="[bashfuns] F2:LIST F3:LOAD F4:SAVE F5:EDIT F6:LOAD-SCR F7:EDIT-SCR\n"
