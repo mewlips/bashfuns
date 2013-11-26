@@ -5,7 +5,7 @@
 ############
 
 BASHFUNS_SCRIPT=~/.bashfuns
-BASHFUNS_VERSION=2.1
+BASHFUNS_VERSION=2.1.1
 
 BASHFUNS_SAVES_GLOBAL=~/.bashfuns-saves
 BASHFUNS_SAVES_PRIVATE=~/.bashfuns-saves_${USER}_at_${HOSTNAME}
@@ -58,9 +58,18 @@ bashfuns-edit() {
 bashfuns-list() {
     for saves in "$BASHFUNS_SAVES_GLOBAL" "$BASHFUNS_SAVES_PRIVATE"; do
         if [ -f "$saves" ]; then
-            echo $saves
-            grep --color=auto '^[a-z]' "$saves" | sed 's/^/    /' | sort
+            echo "*" $saves
+            echo
+            echo "  [EXPORTS]"
+            grep '^export' "$saves" | sed 's/export *//' | sed 's/^/      /' | sort
+            echo
+            echo "  [FUNCTIONS]"
+            grep '^[a-zA-Z]' "$saves" | grep '()' | sed 's/ *()//' | sed 's/ *#//' | sed 's/^/      /' | sort
+            echo
+            echo "  [ALIASES]"
+            grep '^alias' "$saves" | sed 's/^alias /      /' | sort
         fi
+        echo
     done
 }
 bashfuns-save-alias() {
@@ -79,6 +88,15 @@ bashfuns-save-alias() {
         fi
     done
 }
+
+# key bindings
+# F2:list F3:load F4:save F5:edit F6:load-script F7:edit-script
+bind '"OQ":"bf list"'
+bind '"OR":"bf load"'
+bind '"OS":"bf save "'
+bind '"[15~":"bf edit "'
+bind '"[17~":"bf load-script"'
+bind '"[18~":"bf edit-script"'
 
 bashfuns-help() {
     echo "Bashfuns v$BASHFUNS_VERSION"
@@ -107,14 +125,5 @@ bashfuns() {
 bashfuns-load
 
 alias bf=bashfuns
-
-# key bindings
-# F2:list F3:load F4:save F5:edit F6:load-script F7:edit-script
-bind '"OQ":"bf list"'
-bind '"OR":"bf load"'
-bind '"OS":"bf save "'
-bind '"[15~":"bf edit "'
-bind '"[17~":"bf load-script"'
-bind '"[18~":"bf edit-script"'
 
 #BPL_PS1_LINE_ADDON="[bashfuns] F2:LIST F3:LOAD F4:SAVE F5:EDIT F6:LOAD-SCR F7:EDIT-SCR\n"
