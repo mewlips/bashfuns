@@ -5,20 +5,46 @@
 ############
 
 BASHFUNS_SCRIPT=~/.bashfuns
-BASHFUNS_VERSION=2.1.1
+BASHFUNS_VERSION=2.2
 
 BASHFUNS_SAVES_GLOBAL=~/.bashfuns-saves
 BASHFUNS_SAVES_PRIVATE=~/.bashfuns-saves_${USER}_at_${HOSTNAME}
 
-bashfuns-edit-script() {
+bashfuns_wrap_color () {
+    local color=$1
+    shift
+    case "$color" in
+        "black")   echo $(tput setaf 0)"$*"$(tput sgr0);;
+        "red")     echo $(tput setaf 1)"$*"$(tput sgr0);;
+        "green")   echo $(tput setaf 2)"$*"$(tput sgr0);;
+        "yellow")  echo $(tput setaf 3)"$*"$(tput sgr0);;
+        "blue")    echo $(tput setaf 4)"$*"$(tput sgr0);;
+        "magenta") echo $(tput setaf 5)"$*"$(tput sgr0);;
+        "cyan")    echo $(tput setaf 6)"$*"$(tput sgr0);;
+        "white")   echo $(tput setaf 7)"$*"$(tput sgr0);;
+        "BLACK")   echo $(tput bold)$(tput setaf 0)"$*"$(tput sgr0);;
+        "RED")     echo $(tput bold)$(tput setaf 1)"$*"$(tput sgr0);;
+        "GREEN")   echo $(tput bold)$(tput setaf 2)"$*"$(tput sgr0);;
+        "YELLOW")  echo $(tput bold)$(tput setaf 3)"$*"$(tput sgr0);;
+        "BLUE")    echo $(tput bold)$(tput setaf 4)"$*"$(tput sgr0);;
+        "MAGENTA") echo $(tput bold)$(tput setaf 5)"$*"$(tput sgr0);;
+        "CYAN")    echo $(tput bold)$(tput setaf 6)"$*"$(tput sgr0);;
+        "WHITE")   echo $(tput bold)$(tput setaf 7)"$*"$(tput sgr0);;
+        [0-9]*)    echo $(tput bold)$(tput setaf $color)"$*"$(tput sgr0);;
+        *)         echo $color "$*"
+    esac
+}
+alias wrap_color=bashfuns_wrap_color
+
+bashfuns_edit_script() {
     $EDITOR "$BASHFUNS_SCRIPT"
 }
-bashfuns-load-script() {
+bashfuns_load_script() {
     . "$BASHFUNS_SCRIPT"
 }
-bashfuns-save() {
+bashfuns_save() {
     local saves
-    if [ "$1" == "-g" ]; then
+    if [[ $1 == "-g" ]]; then
         saves="$BASHFUNS_SAVES_GLOBAL"
         shift
     else
@@ -26,23 +52,23 @@ bashfuns-save() {
     fi
     for fun in $*; do
         declare -f "$fun" >> "$saves"
-        if [ $? = 0 ]; then
+        if [[ $? = 0 ]]; then
             echo \"$fun\" saved.
         else
             echo "undefined function: $fun [skipped]"
         fi
     done
 }
-bashfuns-load() {
+bashfuns_load() {
     for saves in "$BASHFUNS_SAVES_GLOBAL" "$BASHFUNS_SAVES_PRIVATE"; do
         if [ -f "$saves" ]; then
             . "$saves"
         fi
     done
 }
-bashfuns-edit() {
+bashfuns_edit() {
     local saves
-    if [ "$1" == "-g" ]; then
+    if [[ $1 == "-g" ]]; then
         saves="$BASHFUNS_SAVES_GLOBAL"
         shift
     else
@@ -55,26 +81,26 @@ bashfuns-edit() {
         $EDITOR "$saves"
     fi
 }
-bashfuns-list() {
+bashfuns_list() {
     for saves in "$BASHFUNS_SAVES_GLOBAL" "$BASHFUNS_SAVES_PRIVATE"; do
-        if [ -f "$saves" ]; then
-            echo "*" $saves
+        if [[ -f $saves ]]; then
+            echo "<< $(wrap_color WHITE $saves) >>"
             echo
-            echo "  [EXPORTS]"
+            echo $(wrap_color BLUE "  [EXPORTS]")
             grep '^export' "$saves" | sed 's/export *//' | sed 's/^/      /' | sort
             echo
-            echo "  [FUNCTIONS]"
+            echo $(wrap_color BLUE "  [FUNCTIONS]")
             grep '^[a-zA-Z]' "$saves" | grep '()' | sed 's/ *()//' | sed 's/ *#//' | sed 's/^/      /' | sort
             echo
-            echo "  [ALIASES]"
+            echo $(wrap_color BLUE "  [ALIASES]")
             grep '^alias' "$saves" | sed 's/^alias /      /' | sort
         fi
         echo
     done
 }
-bashfuns-save-alias() {
+bashfuns_save_alias() {
     local saves
-    if [ "$1" == "-g" ]; then
+    if [[ $1 == "-g" ]]; then
         saves="$BASHFUNS_SAVES_GLOBAL"
         shift
     else
@@ -95,10 +121,10 @@ bind '"OQ":"bf list"'
 bind '"OR":"bf load"'
 bind '"OS":"bf save "'
 bind '"[15~":"bf edit "'
-bind '"[17~":"bf load-script"'
-bind '"[18~":"bf edit-script"'
+bind '"[17~":"bf load_script"'
+bind '"[18~":"bf edit_script"'
 
-bashfuns-help() {
+bashfuns_help() {
     echo "Bashfuns v$BASHFUNS_VERSION"
     echo
     echo "bf help            :     "
@@ -108,22 +134,20 @@ bashfuns-help() {
     echo "bf save -g <fun>.. :     "
     echo "bf edit            : <F5>"
     echo "bf edit -g         :     "
-    echo "bf load-script     : <F6>"
-    echo "bf save-script     : <F7>"
+    echo "bf load_script     : <F6>"
+    echo "bf save_script     : <F7>"
     echo
 }
 bashfuns() {
     local cmd="$1"
-    if [ -z "$cmd" ]; then
-        bashfuns-help
+    if [[ -z $cmd ]]; then
+        bashfuns_help
         return
     fi
     shift
-    bashfuns-"$cmd" $*
+    bashfuns_"$cmd" $*
 }
 
-bashfuns-load
+bashfuns_load
 
 alias bf=bashfuns
-
-#BPL_PS1_LINE_ADDON="[bashfuns] F2:LIST F3:LOAD F4:SAVE F5:EDIT F6:LOAD-SCR F7:EDIT-SCR\n"
