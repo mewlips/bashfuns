@@ -10,6 +10,10 @@ BASHFUNS_VERSION=2.2
 BASHFUNS_SAVES_GLOBAL=~/.bashfuns-saves
 BASHFUNS_SAVES_PRIVATE=~/.bashfuns-saves_${USER}_at_${HOSTNAME}
 
+if [ -z "$EDITOR" ]; then
+    EDITOR=vi
+fi
+
 bashfuns_wrap_color () {
     local color=$1
     shift
@@ -74,7 +78,6 @@ bashfuns_edit() {
     else
         saves="$BASHFUNS_SAVES_PRIVATE"
     fi
-
     if [ "$EDITOR" == "vim" ]; then
         vim -c ":set syntax=sh" "$saves"
     else
